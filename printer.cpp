@@ -2,12 +2,15 @@
 
 namespace crepe {
 
-void printer::notify_file(char const* name) {
+void printer::notify_file(std::string&& name) {
+  std::unique_lock<std::mutex> lock(contents_mtx);
+  contents.emplace(tag::filename, std::move(name));
+  contents_cv.notify_one();
 }
 
 void printer::notify(std::string&& s) {
   std::unique_lock<std::mutex> lock(contents_mtx);
-  contents.emplace(tag::print, std::move(s));
+  contents.emplace(tag::match, std::move(s));
   contents_cv.notify_one();
 }
 
@@ -17,7 +20,7 @@ void printer::notify(int linum, std::string const& s) {
 
 void printer::notify(int linum, std::string&& s) {
   std::unique_lock<std::mutex> lock(contents_mtx);
-  contents.emplace(tag::print, std::to_string(linum) + ": " + std::move(s));
+  contents.emplace(tag::match, std::to_string(linum) + ": " + std::move(s));
   contents_cv.notify_one();
 }
 
@@ -37,7 +40,15 @@ void printer::run() {
         switch (top.t) {
         case tag::finish:
           return;
-        case tag::print:
+        case tag::match:
+          os << top.contents << '\n';
+          break;
+        case tag::filename:
+          if (!is_first_file) {
+            os << '\n';
+          } else {
+            is_first_file = false;
+          }
           os << top.contents << '\n';
         }
         contents.pop();

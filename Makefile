@@ -1,8 +1,9 @@
-SRCS := crepe.cpp printer.cpp matcher.cpp
+SRCS := crepe.cpp printer.cpp matcher.cpp walker.cpp
 OBJS := $(subst .cpp,.o,$(SRCS))
 
 COMPILER := g++
 CPPFLAGS := -std=c++11 -O3
+LDFLAGS := -lboost_filesystem -lboost_system
 
 TARGET := crepe
 
@@ -11,7 +12,7 @@ TARGET := crepe
 all: crepe
 
 crepe: $(OBJS)
-	$(COMPILER) $(CPPFLAGS) -o $@ $^
+	$(COMPILER) $(CPPFLAGS) $(LDFLAGS) -o $@ $^
 
 %.o: %.cpp
 	$(COMPILER) $(CPPFLAGS) -c -o $@ $<

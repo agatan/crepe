@@ -13,7 +13,7 @@ class printer {
 public:
   explicit printer(std::ostream& os) : os(os) {}
 
-  void notify_file(char const*);
+  void notify_file(std::string&&);
 
   void notify(std::string&&);
   void notify(int linum, std::string const&);
@@ -25,7 +25,8 @@ public:
 
 private:
   enum class tag {
-    print,
+    match,
+    filename,
     finish,
   };
 
@@ -42,6 +43,8 @@ private:
   std::mutex contents_mtx;
   std::condition_variable contents_cv;
   std::queue<task> contents;
+
+  bool is_first_file = true;
 };
 
 } // namespace crepe

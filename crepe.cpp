@@ -5,6 +5,7 @@
 
 #include "printer.hpp"
 #include "matcher.hpp"
+#include "walker.hpp"
 
 struct match {
   std::string contents;
@@ -33,11 +34,15 @@ int main(int argc, char **argv) {
 
   crepe::printer p(std::cout);
   crepe::matcher m(std::move(needle), p);
+  crepe::walker w(m);
 
-  std::thread t([&]{ p.run(); });
-  m.run(filename);
+  std::thread print_thread([&] { p.run(); });
+  std::thread match_thread([&] { m.run(); });
+  std::thread walk_thread([&] { w.run(filename); });
 
-  t.join();
+  print_thread.join();
+  match_thread.join();
+  walk_thread.join();
 
   return 0;
 }
