@@ -19,6 +19,6 @@ crepe: $(OBJS)
 	$(COMPILER) $(CPPFLAGS) -c -o $@ $<
 
 clean:
-	$(RM) $(TARGET) $(OBJS)
+	$(RM) $(TARGET) $(OBJS) $(DEPS)
 
 -include $(DEPS)
