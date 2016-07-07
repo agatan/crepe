@@ -60,6 +60,7 @@ void matcher::process_file(std::string&& filename) {
     }
     linum++;
   }
+  if (line) free(line);
 }
 
 } // namespace crepe
