@@ -41,15 +41,20 @@ void printer::run() {
         case tag::finish:
           return;
         case tag::match:
-          os << top.contents << '\n';
+          if (is_first_match) {
+            is_first_match = false;
+            if (is_first_file) {
+              is_first_file = false;
+            } else {
+              os << '\n';
+            }
+            os << current_file << '\n';
+          }
+          os << top.contents;
           break;
         case tag::filename:
-          if (!is_first_file) {
-            os << '\n';
-          } else {
-            is_first_file = false;
-          }
-          os << top.contents << '\n';
+          current_file = std::move(top.contents);
+          is_first_match = true;
         }
         contents.pop();
       }

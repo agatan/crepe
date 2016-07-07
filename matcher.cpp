@@ -1,7 +1,8 @@
 #include "matcher.hpp"
+#include "file.hpp"
 
 #include <fstream>
-#include <iostream>
+#include <stdio.h>
 
 namespace crepe {
 
@@ -38,19 +39,24 @@ void matcher::run() {
 }
 
 void matcher::process_file(std::string&& filename) {
-  std::fstream fin;
-  fin.open(filename);
-  if (!fin) {
-    // TODO: throw error
-    std::cerr << "unable to open file: " << filename << std::endl;
-    std::exit(1);
+  FILE* fp = fopen(filename.c_str(), "rb");
+  if (!fp) {
+    // TODO: raise or notify error.
+    return;
+  }
+  auto ft = detect_filetype(fp, filename.c_str());
+  if (ft == filetype::binary) {
+    // Skip binary file.
+    return;
   }
   p.notify_file(std::move(filename));
-  std::string line;
   int linum = 1;
-  while (std::getline(fin, line)) {
-    if (line.find(needle) != std::string::npos) {
-      p.notify(linum, line);
+  char* line = NULL;
+  size_t len;
+  while (getline(&line, &len, fp) != -1) {
+    std::string l(line);
+    if (l.find(needle) != std::string::npos) {
+      p.notify(linum, std::move(l));
     }
     linum++;
   }

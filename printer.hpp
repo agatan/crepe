@@ -45,6 +45,8 @@ private:
   std::queue<task> contents;
 
   bool is_first_file = true;
+  bool is_first_match = true;
+  std::string current_file;
 };
 
 } // namespace crepe
