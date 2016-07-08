@@ -2,7 +2,10 @@
 #include "file.hpp"
 
 #include <fstream>
+#include <memory>
 #include <stdio.h>
+
+#include "match_result.hpp"
 
 namespace crepe {
 
@@ -49,18 +52,19 @@ void matcher::process_file(std::string&& filename) {
     // Skip binary file.
     return;
   }
-  p.notify_file(std::move(filename));
   int linum = 1;
   char* line = NULL;
   size_t len;
+  auto result = std::make_unique<match_result>(std::move(filename));
   while (getline(&line, &len, fp) != -1) {
     std::string l(line);
     if (l.find(needle) != std::string::npos) {
-      p.notify(linum, std::move(l));
+      result->add_match(match_type::exact, linum, std::move(l));
     }
     linum++;
   }
   if (line) free(line);
+  if (!result->matches.empty()) p.notify_match(std::move(result));
 }
 
 } // namespace crepe

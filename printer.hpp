@@ -3,9 +3,12 @@
 
 #include <string>
 #include <queue>
+#include <memory>
 #include <iostream>
 #include <mutex>
 #include <condition_variable>
+
+#include "match_result.hpp"
 
 namespace crepe {
 
@@ -13,11 +16,7 @@ class printer {
 public:
   explicit printer(std::ostream& os) : os(os) {}
 
-  void notify_file(std::string&&);
-
-  void notify(std::string&&);
-  void notify(int linum, std::string const&);
-  void notify(int linum, std::string&&);
+  void notify_match(std::unique_ptr<match_result>&&);
 
   void notify_finish();
 
@@ -26,15 +25,14 @@ public:
 private:
   enum class tag {
     match,
-    filename,
     finish,
   };
 
   struct task {
     tag t;
-    std::string contents;
+    std::unique_ptr<match_result> result;
 
-    task(tag t, std::string&& s) : t(t), contents(std::move(s)) {}
+    task(tag t, std::unique_ptr<match_result>&& m) : t(t), result(std::move(m)) {}
     explicit task(tag t) : t(t) {}
   };
 
@@ -45,8 +43,6 @@ private:
   std::queue<task> contents;
 
   bool is_first_file = true;
-  bool is_first_match = true;
-  std::string current_file;
 };
 
 } // namespace crepe
