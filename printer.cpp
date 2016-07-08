@@ -1,5 +1,7 @@
 #include "printer.hpp"
 
+#include "option.hpp"
+
 namespace crepe {
 
 void printer::notify_match(std::unique_ptr<match_result>&& m) {
@@ -15,20 +17,27 @@ void printer::notify_finish() {
 }
 
 static void
+print_line_number(std::ostream& os, match_type t, int n) {
+  if (!opt.line_number) return;
+  switch (t) {
+  case match_type::exact:
+    os << n << ":";
+    break;
+  case match_type::after:
+    os << "+:";
+    break;
+  case match_type::before:
+    os << "-:";
+    break;
+  }
+}
+
+static void
 print_match(std::ostream& os, match_result const& m) {
   os << m.file_name << '\n';
   for (auto&& line: m.matches) {
-    switch (line.type) {
-    case match_type::exact:
-      os << line.line_num << ":" << line.contents;
-      break;
-    case match_type::after:
-      os << "+:" << line.contents;
-      break;
-    case match_type::before:
-      os << "-:" << line.contents;
-      break;
-    }
+    print_line_number(os, line.type, line.line_num);
+    os << line.contents;
   }
 }
 
