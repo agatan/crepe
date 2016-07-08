@@ -4,6 +4,7 @@
 #include <string>
 #include <mutex>
 #include <condition_variable>
+#include <stdio.h>
 
 #include "printer.hpp"
 
@@ -14,7 +15,7 @@ public:
   explicit matcher(std::string&& needle, printer& p)
      : needle(std::move(needle)), p(p) {}
 
-  void notify_file(std::string const&);
+  void notify_file(std::string const&, FILE*);
   void notify_finish();
 
   void run();
@@ -28,9 +29,10 @@ private:
   struct task {
     tag t;
     std::string filename;
+    FILE* fp;
 
-    task(tag t, std::string&& n) : t(t), filename(std::move(n)) {}
-    task(tag t, std::string const& n) : t(t), filename(n) {}
+    task(tag t, std::string&& n, FILE* fp) : t(t), filename(std::move(n)), fp(fp) {}
+    task(tag t, std::string const& n, FILE* fp) : t(t), filename(n), fp(fp) {}
     explicit task(tag t) : t(t) {}
   };
 
@@ -41,7 +43,7 @@ private:
   std::condition_variable file_queue_cv;
   std::queue<task> file_queue;
 
-  void process_file(std::string&& filename);
+  void process_file(std::string&& filename, FILE* fp);
 };
 
 } // namespace crepe

@@ -9,9 +9,9 @@
 
 namespace crepe {
 
-void matcher::notify_file(std::string const& name) {
+void matcher::notify_file(std::string const& name, FILE* fp) {
   std::unique_lock<std::mutex> lock(file_queue_mtx);
-  file_queue.emplace(tag::file, name);
+  file_queue.emplace(tag::file, name, fp);
   file_queue_cv.notify_one();
 }
 
@@ -33,7 +33,7 @@ void matcher::run() {
           p.notify_finish();
           return;
         case tag::file:
-          process_file(std::move(top.filename));
+          process_file(std::move(top.filename), top.fp);
         }
         file_queue.pop();
       }
@@ -41,15 +41,9 @@ void matcher::run() {
   }
 }
 
-void matcher::process_file(std::string&& filename) {
-  FILE* fp = fopen(filename.c_str(), "rb");
+void matcher::process_file(std::string&& filename, FILE* fp) {
   if (!fp) {
     // TODO: raise or notify error.
-    return;
-  }
-  auto ft = detect_filetype(fp, filename.c_str());
-  if (ft == filetype::binary) {
-    // Skip binary file.
     return;
   }
   int linum = 1;
@@ -64,6 +58,7 @@ void matcher::process_file(std::string&& filename) {
     linum++;
   }
   if (line) free(line);
+  fclose(fp); // TODO: error handling
   if (!result->matches.empty()) p.notify_match(std::move(result));
 }
 

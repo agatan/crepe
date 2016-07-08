@@ -13,6 +13,8 @@ public:
 
 private:
   matcher& m;
+
+  void process_file(std::string const&);
 };
 
 } // namespace crepe
