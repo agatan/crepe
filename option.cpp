@@ -85,7 +85,7 @@ void init_option(int argc, char* const* argv) {
 }
 
 void usage() {
-  puts("Usage: crepe");
+  puts("Usage: crepe [OPTIONS] pattern [PATH]");
   puts("    -h, --help:            show this message");
   puts("    -v, --version:         print crepe version");
   puts("    --no-line-number:      disable line number print");

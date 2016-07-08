@@ -22,10 +22,17 @@ make
 ## Usage
 
 ```
-crepe <PATTERN> <SEARCH_PATH>
+Usage: crepe [OPTIONS] pattern [PATH]
+    -h, --help:            show this message
+    -v, --version:         print crepe version
+    --no-line-number:      disable line number print
+    --no-group:            disable group output
+    --no-color:            disable colorful output
 ```
 
-If a directory name is given as `SEARCH_PATH`, `crepe` recursively explores the directory entries and tests the pattern for each entry file.
+If a directory name is given as `PATH`, `crepe` recursively explores the directory entries and tests the pattern for each entry file.  
+If no `PATH` provided, `crepe` reads and searches from stdin.  
+
 Currently, `crepe` can only handle exact matches.
 
 `crepe` depends on [Boost C++ Libraries](http://www.boost.org/), which is licensed by [The Boost License](http://www.boost.org/users/license.html).
