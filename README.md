@@ -3,7 +3,8 @@
 This project is inspired by [tkengo/highway](https://github.com/tkengo/highway).
 `crepe` have much respect for `highway`.
 
-`crepe` is still heavily under development.
+`crepe` is still heavily under development.  
+`crepe` does not support Windows system...
 
 ## Features
 
