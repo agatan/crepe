@@ -23,8 +23,11 @@ static void set_defaults() {
   opt.is_stdin_redirect = is_stdin_redirect();
   opt.is_stdout_redirect = is_stdout_redirect();
   opt.color = !opt.is_stdout_redirect;
-  opt.group_result = !opt.is_stdout_redirect && !opt.is_stdin_redirect;
+  opt.group_result = !opt.is_stdin_redirect;
   opt.line_number = !opt.is_stdin_redirect;
+
+  opt.file_color = color::yellow;
+  opt.line_color = color::green;
 }
 
 void init_option(int argc, char* const* argv) {

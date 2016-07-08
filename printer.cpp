@@ -1,6 +1,7 @@
 #include "printer.hpp"
 
 #include "option.hpp"
+#include "color.hpp"
 
 namespace crepe {
 
@@ -21,24 +22,33 @@ print_line_number(std::ostream& os, match_type t, int n) {
   if (!opt.line_number) return;
   switch (t) {
   case match_type::exact:
-    os << n << ":";
+    print_with_color(os, opt.line_color, n);
     break;
   case match_type::after:
-    os << "+:";
+    print_with_color(os, opt.line_color, '+');
     break;
   case match_type::before:
-    os << "-:";
+    print_with_color(os, opt.line_color, '-');
     break;
   }
+  os << ":";
+}
+
+static void
+print_file_name(std::ostream& os, std::string const& name) {
+  if (!opt.group_result) return;
+  print_with_color(os, opt.file_color, name);
+  os << '\n';
 }
 
 static void
 print_match(std::ostream& os, match_result const& m) {
-  os << m.file_name << '\n';
+  print_file_name(os, m.file_name);
   for (auto&& line: m.matches) {
     print_line_number(os, line.type, line.line_num);
     os << line.contents;
   }
+  if (opt.group_result) os << '\n';
 }
 
 void printer::run() {
@@ -53,7 +63,6 @@ void printer::run() {
           return;
         case tag::match:
           print_match(os, *top.result);
-          os << '\n';
           break;
         }
         contents.pop();

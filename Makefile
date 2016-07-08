@@ -1,4 +1,4 @@
-SRCS := crepe.cpp printer.cpp matcher.cpp walker.cpp file.cpp option.cpp
+SRCS := crepe.cpp printer.cpp matcher.cpp walker.cpp file.cpp option.cpp color.cpp
 OBJS := $(subst .cpp,.o,$(SRCS))
 DEPS := $(subst .cpp,.d,$(SRCS))
 
