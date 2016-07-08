@@ -12,11 +12,11 @@ namespace popt = boost::program_options;
 crepe_option opt;
 
 static bool is_stdin_redirect() {
-  return isatty(STDIN_FILENO);
+  return !isatty(STDIN_FILENO);
 }
 
 static bool is_stdout_redirect() {
-  return isatty(STDOUT_FILENO);
+  return !isatty(STDOUT_FILENO);
 }
 
 static void set_defaults() {
