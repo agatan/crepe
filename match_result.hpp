@@ -1,5 +1,5 @@
-#ifndef MATCH_HPP_
-#define MATCH_HPP_
+#ifndef MATCH_RESULT_HPP_
+#define MATCH_RESULT_HPP_
 
 #include <string>
 
