@@ -9,7 +9,7 @@ class walker {
 public:
   explicit walker(matcher& m): m(m) {}
 
-  void run(char const* base);
+  void run();
 
 private:
   matcher& m;

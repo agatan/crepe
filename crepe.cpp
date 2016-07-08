@@ -6,6 +6,7 @@
 #include "printer.hpp"
 #include "matcher.hpp"
 #include "walker.hpp"
+#include "option.hpp"
 
 struct match {
   std::string contents;
@@ -26,19 +27,15 @@ bool make_match(int linum, std::string const& line, std::string const& needle, m
 }
 
 int main(int argc, char **argv) {
-  if (argc < 3) {
-    return 1;
-  }
-  std::string needle = argv[1];
-  auto filename = argv[2];
+  crepe::init_option(argc, argv);
 
   crepe::printer p(std::cout);
-  crepe::matcher m(std::move(needle), p);
+  crepe::matcher m(std::move(crepe::opt.pattern), p);
   crepe::walker w(m);
 
   std::thread print_thread([&] { p.run(); });
   std::thread match_thread([&] { m.run(); });
-  std::thread walk_thread([&] { w.run(filename); });
+  std::thread walk_thread([&] { w.run(); });
 
   print_thread.join();
   match_thread.join();
