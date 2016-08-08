@@ -12,10 +12,14 @@ namespace fs = boost::filesystem;
 
 void walker::run() {
   if (opt.paths.empty()) {
-    // from stdin
-    m.notify_file("", stdin);
-    m.notify_finish();
-    return;
+    if (opt.is_stdin_redirect) {
+      // from stdin
+      m.notify_file("", stdin);
+      m.notify_finish();
+      return;
+    } else {
+      opt.paths.emplace_back(".");
+    }
   }
   for (auto&& base : opt.paths) {
     fs::path path(std::move(base));
