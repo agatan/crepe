@@ -8,17 +8,22 @@ LDFLAGS := -lboost_filesystem -lboost_system -lboost_program_options
 
 TARGET := crepe
 
-.PHONY: all clean
+.PHONY: all clean install
+
+PREFIX := /usr/local/bin
 
 all: crepe
 
-crepe: $(OBJS)
+$(TARGET): $(OBJS)
 	$(COMPILER) $(CPPFLAGS) $(LDFLAGS) -o $@ $^
 
 %.o: %.cpp
 	$(COMPILER) $(CPPFLAGS) -c -o $@ $<
 
 clean:
-	$(RM) $(TARGET) $(OBJS) $(DEPS)
+	$(RM) $(TARGET) $(OBJS) $(DEPS) $(PREFIX)/$(TARGET)
+
+install: crepe
+	cp crepe $(PREFIX)/$(TARGET)
 
 -include $(DEPS)
